@@ -10,7 +10,7 @@
     <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-sm">
         <h2 class="text-2xl font-bold text-center mb-6 text-indigo-600">Login to Al-Furqan Academy</h2>
         <form method="POST" action="{{ url_for('main.login') }}">
-            <!-- THIS IS THE CRITICAL FIX: The CSRF token -->
+            <!-- This is the hidden input field for the CSRF token -->
             {{ csrf_token() }}
             <div class="mb-4">
                 <label for="username" class="block text-gray-700 text-sm font-bold mb-2">Username</label>
