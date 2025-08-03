@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Alfurqan Academy Mai'adua</title>
+    <!-- Favicon link to fix the 404 error -->
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <style>
         body {
@@ -13,6 +15,24 @@
         .container {
             max-width: 1200px;
         }
+        /* Custom styling for flash messages */
+        .alert {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 0.25rem;
+        }
+        .alert-success {
+            background-color: #d1e7dd;
+            color: #0f5132;
+        }
+        .alert-warning {
+            background-color: #fff3cd;
+            color: #664d03;
+        }
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #842029;
+        }
     </style>
 </head>
 <body class="flex flex-col min-h-screen">
@@ -21,17 +41,16 @@
     <nav class="bg-white shadow-md">
         <div class="container mx-auto px-4 py-4 flex justify-between items-center">
             <div class="flex items-center">
-                <a href="{{ url_for('main.index') }}" class="flex items-center">
+                <a href="{{ url_for('main.dashboard') }}" class="flex items-center">
                     <!-- Corrected file extension to .jpg -->
                     <img src="{{ url_for('static', filename='images/alfurqan_logo.jpg') }}" onerror="this.onerror=null; this.src='{{ url_for('static', filename='images/fallback_logo.png') }}';" alt="Alfurqan Academy Mai'adua Logo" class="h-10">
                 </a>
             </div>
             <div class="hidden md:flex items-center space-x-4">
-                <a href="{{ url_for('main.index') }}" class="text-gray-600 hover:text-green-600 transition duration-300">Home</a>
-                <!-- Link to the new register_student route -->
-                <a href="{{ url_for('main.register_student') }}" class="text-gray-600 hover:text-green-600 transition duration-300">Register Student</a>
-                <!-- Link to the view_students route -->
-                <a href="{{ url_for('main.students') }}" class="text-gray-600 hover:text-green-600 transition duration-300">View All Students</a>
+                <!-- Corrected link to point to the dashboard -->
+                <a href="{{ url_for('main.dashboard') }}" class="text-gray-600 hover:text-green-600 transition duration-300">Home</a>
+                <a href="{{ url_for('main.register') }}" class="text-gray-600 hover:text-green-600 transition duration-300">Register Student</a>
+                <a href="{{ url_for('main.add_student') }}" class="text-gray-600 hover:text-green-600 transition duration-300">Add Student</a>
                 <a href="{{ url_for('main.logout') }}" class="text-white bg-green-600 hover:bg-green-700 px-4 py-2 rounded-md transition duration-300">Logout</a>
             </div>
         </div>
@@ -41,9 +60,13 @@
     <main class="container mx-auto px-4 py-8 flex-grow">
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ category }}">{{ message }}</div>
-                {% endfor %}
+                <div class="w-full">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}" role="alert">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
             {% endif %}
         {% endwith %}
         {% block content %}{% endblock %}
@@ -51,7 +74,7 @@
 
     <!-- Footer -->
     <footer class="bg-gray-800 text-white text-center py-4 mt-auto">
-        <p>&copy; {{ 2025 }} Alfurqan Academy Mai'adua. All rights reserved.</p>
+        <p>&copy; {{ now.year }} Alfurqan Academy Mai'adua. All rights reserved.</p>
     </footer>
 
 </body>
