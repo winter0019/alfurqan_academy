@@ -6,27 +6,33 @@ from flask_login import login_user, logout_user, login_required, current_user
 
 main_bp = Blueprint('main', __name__)
 
-# Temporary route to create the first admin user
 @main_bp.route('/create_first_admin')
 def create_first_admin():
-    # Check if an admin user already exists to prevent misuse
-    existing_user = User.query.filter_by(username='admin').first()
-    if existing_user:
-        flash('Admin user already exists. You can log in.', 'info')
-        return redirect(url_for('main.login'))
+    try:
+        # Check if an admin user already exists to prevent misuse
+        existing_user = User.query.filter_by(username='admin').first()
+        if existing_user:
+            flash('Admin user already exists. You can log in.', 'info')
+            return redirect(url_for('main.login'))
 
-    # Hash the password for the new admin user
-    hashed_password = bcrypt.generate_password_hash('admin').decode('utf-8')
-    
-    # Create the new user object
-    first_admin = User(username='admin', password=hashed_password, role='admin')
-    
-    # Add to the database
-    db.session.add(first_admin)
-    db.session.commit()
-    
-    flash('First admin user created successfully. You can now log in.', 'success')
-    return redirect(url_for('main.login'))
+        # Hash the password for the new admin user
+        hashed_password = bcrypt.generate_password_hash('admin').decode('utf-8')
+        
+        # Create the new user object
+        first_admin = User(username='admin', password=hashed_password, role='admin')
+        
+        # Add to the database
+        db.session.add(first_admin)
+        db.session.commit()
+        
+        flash('First admin user created successfully. You can now log in.', 'success')
+        return redirect(url_for('main.login'))
+        
+    except Exception as e:
+        # Catch any errors and provide a specific flash message
+        db.session.rollback()
+        flash(f'An error occurred while creating the admin user: {str(e)}', 'danger')
+        return redirect(url_for('main.login'))
 
 @main_bp.route('/', methods=['GET', 'POST'])
 @main_bp.route('/login', methods=['GET', 'POST'])
