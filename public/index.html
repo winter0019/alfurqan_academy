@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alfurqa Academy</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body class="bg-gray-100 font-sans">
+    <div id="app" class="flex flex-col min-h-screen">
+        <!-- Auth Section -->
+        <div id="auth-container" class="flex items-center justify-center flex-grow">
+            <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+                <h2 class="text-3xl font-bold text-center mb-6 text-gray-800">Alfurqa Academy</h2>
+                
+                <!-- Login Form -->
+                <form id="login-form" class="mb-4">
+                    <h3 class="text-xl font-semibold mb-4 text-gray-700">Login</h3>
+                    <div class="mb-4">
+                        <label for="login-email" class="block text-sm font-medium text-gray-700">Email</label>
+                        <input type="email" id="login-email" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    <div class="mb-6">
+                        <label for="login-password" class="block text-sm font-medium text-gray-700">Password</label>
+                        <input type="password" id="login-password" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">Login</button>
+                    <p class="mt-4 text-center text-sm text-gray-600">
+                        Don't have an account? <a href="#" id="show-register" class="font-medium text-indigo-600 hover:text-indigo-500">Register here</a>
+                    </p>
+                </form>
+
+                <!-- Registration Form -->
+                <form id="register-form" class="hidden">
+                    <h3 class="text-xl font-semibold mb-4 text-gray-700">Register</h3>
+                    <div class="mb-4">
+                        <label for="register-email" class="block text-sm font-medium text-gray-700">Email</label>
+                        <input type="email" id="register-email" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    <div class="mb-6">
+                        <label for="register-password" class="block text-sm font-medium text-gray-700">Password</label>
+                        <input type="password" id="register-password" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    <button type="submit" class="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">Register</button>
+                    <p class="mt-4 text-center text-sm text-gray-600">
+                        Already have an account? <a href="#" id="show-login" class="font-medium text-indigo-600 hover:text-indigo-500">Login here</a>
+                    </p>
+                </form>
+            </div>
+        </div>
+
+        <!-- Dashboard Section -->
+        <div id="dashboard-container" class="hidden flex-grow">
+            <header class="bg-white shadow-sm p-4 flex justify-between items-center">
+                <h1 class="text-xl font-bold">Alfurqa Academy Dashboard</h1>
+                <div>
+                    <span id="user-email" class="mr-4 text-gray-600"></span>
+                    <button id="logout-btn" class="bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">Logout</button>
+                </div>
+            </header>
+
+            <main class="p-6">
+                <!-- Regular User UI -->
+                <div id="user-dashboard-content">
+                     <!-- Add Student Form -->
+                    <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
+                        <h2 class="text-xl font-semibold mb-4">Add New Student</h2>
+                        <form id="add-student-form" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <div>
+                                <label for="first-name" class="block text-sm font-medium text-gray-700">First Name</label>
+                                <input type="text" id="first-name" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md">
+                            </div>
+                            <div>
+                                <label for="last-name" class="block text-sm font-medium text-gray-700">Last Name</label>
+                                <input type="text" id="last-name" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md">
+                            </div>
+                            <div>
+                                <label for="enrollment-date" class="block text-sm font-medium text-gray-700">Enrollment Date</label>
+                                <input type="date" id="enrollment-date" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md">
+                            </div>
+                            <button type="submit" class="w-full md:col-span-2 lg:col-span-3 bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 mt-4">Add Student</button>
+                        </form>
+                    </div>
+
+                    <!-- Students List -->
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <h2 class="text-xl font-semibold mb-4">Your Students</h2>
+                        <ul id="students-list" class="space-y-4">
+                            <!-- Student items will be dynamically added here -->
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Admin Dashboard UI -->
+                <div id="admin-dashboard-content" class="hidden">
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <h2 class="text-xl font-semibold mb-4">Admin Dashboard</h2>
+                        <p class="text-gray-600">This section is for administrators only. You can add more functionality here, like managing all users or all students in a single view.</p>
+                        <!-- Admin-specific forms and tables would go here -->
+                        <button id="add-admin-data-btn" class="mt-4 bg-purple-600 text-white py-2 px-4 rounded-md hover:bg-purple-700">Add Admin Data</button>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- The core Firebase JS SDKs are added here -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="main.js"></script>
+</body>
+</html>
