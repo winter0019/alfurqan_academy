@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Alfurqan Academy Mai'adua</title>
-    <!-- Favicon link to fix the 404 error -->
-    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
+    <!-- Favicon link points to the root of the static folder -->
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <style>
         body {
@@ -42,12 +42,10 @@
         <div class="container mx-auto px-4 py-4 flex justify-between items-center">
             <div class="flex items-center">
                 <a href="{{ url_for('main.dashboard') }}" class="flex items-center">
-                    <!-- Corrected file extension to .jpg -->
                     <img src="{{ url_for('static', filename='images/alfurqan_logo.jpg') }}" onerror="this.onerror=null; this.src='{{ url_for('static', filename='images/fallback_logo.png') }}';" alt="Alfurqan Academy Mai'adua Logo" class="h-10">
                 </a>
             </div>
             <div class="hidden md:flex items-center space-x-4">
-                <!-- Corrected link to point to the dashboard -->
                 <a href="{{ url_for('main.dashboard') }}" class="text-gray-600 hover:text-green-600 transition duration-300">Home</a>
                 <a href="{{ url_for('main.register') }}" class="text-gray-600 hover:text-green-600 transition duration-300">Register Student</a>
                 <a href="{{ url_for('main.add_student') }}" class="text-gray-600 hover:text-green-600 transition duration-300">Add Student</a>
@@ -76,6 +74,5 @@
     <footer class="bg-gray-800 text-white text-center py-4 mt-auto">
         <p>&copy; {{ now.year }} Alfurqan Academy Mai'adua. All rights reserved.</p>
     </footer>
-
 </body>
 </html>
