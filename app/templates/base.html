@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Alfurqan Academy Mai'adua</title>
-    <!-- Favicon link points to the root of the static folder -->
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <style>
@@ -15,7 +14,6 @@
         .container {
             max-width: 1200px;
         }
-        /* Custom styling for flash messages */
         .alert {
             padding: 1rem;
             margin-bottom: 1rem;
@@ -36,8 +34,6 @@
     </style>
 </head>
 <body class="flex flex-col min-h-screen">
-
-    <!-- Navigation Bar -->
     <nav class="bg-white shadow-md">
         <div class="container mx-auto px-4 py-4 flex justify-between items-center">
             <div class="flex items-center">
@@ -53,8 +49,6 @@
             </div>
         </div>
     </nav>
-
-    <!-- Main Content -->
     <main class="container mx-auto px-4 py-8 flex-grow">
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
@@ -69,8 +63,6 @@
         {% endwith %}
         {% block content %}{% endblock %}
     </main>
-
-    <!-- Footer -->
     <footer class="bg-gray-800 text-white text-center py-4 mt-auto">
         <p>&copy; {{ now.year }} Alfurqan Academy Mai'adua. All rights reserved.</p>
     </footer>
