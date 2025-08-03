@@ -3,7 +3,7 @@ from flask import Flask
 from flask_bcrypt import Bcrypt
 from flask_wtf.csrf import CSRFProtect
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager
+from flask_login import LoginManager, current_user
 
 # Initialize extensions outside of the factory function
 db = SQLAlchemy()
@@ -23,11 +23,11 @@ def create_app():
     else:
         # Fallback to a local SQLite database for local development
         app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
-        # The following line prevents a deprecation warning
+        # This line prevents a deprecation warning
         app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'default-secret-key')
-
+    
     db.init_app(app)
     bcrypt.init_app(app)
     csrf.init_app(app)
@@ -42,8 +42,12 @@ def create_app():
     # Import the models and routes
     from . import models, routes
 
+    # The crucial line to register the blueprint
+    app.register_blueprint(routes.main_bp)
+
     with app.app_context():
         # Create database tables if they don't exist
         db.create_all()
 
     return app
+
