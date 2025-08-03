@@ -1,10 +1,32 @@
 from flask import render_template, redirect, url_for, flash, request, Blueprint
 from . import db, bcrypt
-from .forms import LoginForm
+from .forms import LoginForm, CreateUserForm
 from .models import User
 from flask_login import login_user, logout_user, login_required, current_user
 
 main_bp = Blueprint('main', __name__)
+
+# Temporary route to create the first admin user
+@main_bp.route('/create_first_admin')
+def create_first_admin():
+    # Check if an admin user already exists to prevent misuse
+    existing_user = User.query.filter_by(username='admin').first()
+    if existing_user:
+        flash('Admin user already exists. You can log in.', 'info')
+        return redirect(url_for('main.login'))
+
+    # Hash the password for the new admin user
+    hashed_password = bcrypt.generate_password_hash('admin').decode('utf-8')
+    
+    # Create the new user object
+    first_admin = User(username='admin', password=hashed_password, role='admin')
+    
+    # Add to the database
+    db.session.add(first_admin)
+    db.session.commit()
+    
+    flash('First admin user created successfully. You can now log in.', 'success')
+    return redirect(url_for('main.login'))
 
 @main_bp.route('/', methods=['GET', 'POST'])
 @main_bp.route('/login', methods=['GET', 'POST'])
@@ -46,3 +68,24 @@ def register():
 @login_required
 def add_student():
     return render_template('add_student.html')
+
+@main_bp.route('/create_user', methods=['GET', 'POST'])
+@login_required
+def create_user():
+    form = CreateUserForm()
+    if form.validate_on_submit():
+        existing_user = User.query.filter_by(username=form.username.data).first()
+        if existing_user:
+            flash('Username already exists. Please choose a different one.', 'warning')
+            return render_template('create_user.html', form=form)
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        new_user = User(
+            username=form.username.data,
+            password=hashed_password,
+            role=form.role.data
+        )
+        db.session.add(new_user)
+        db.session.commit()
+        flash('New user created successfully!', 'success')
+        return redirect(url_for('main.dashboard'))
+    return render_template('create_user.html', form=form)
