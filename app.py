@@ -111,6 +111,27 @@ class Payment(db.Model):
     recorded_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
 
+def get_fee_status(student_reg_number, academic_year_check, term_check):
+    student = Student.query.filter_by(reg_number=student_reg_number).first()
+    if not student:
+        return 'N/A'
+    
+    expected_fee = FEE_STRUCTURE.get((student.student_class, term_check), 0.0)
+    total_paid = db.session.query(db.func.sum(Payment.amount_paid)).filter(
+        Payment.student_reg_number == student_reg_number,
+        Payment.term == term_check,
+        Payment.academic_year == academic_year_check
+    ).scalar() or 0.0
+    
+    if expected_fee > 0:
+        if total_paid >= expected_fee:
+            return 'Paid'
+        else:
+            return 'Defaulter'
+    else:
+        return 'N/A'
+
+
 def create_app():
     app = Flask(__name__)
     
@@ -213,7 +234,6 @@ def create_app():
     @app.route('/register_student', methods=('GET', 'POST'))
     @login_required
     def register_student():
-        # Role-based check
         if current_user.role != 'admin':
             abort(403)
             
@@ -437,6 +457,9 @@ def create_app():
     @login_required
     def edit_student(reg_number):
         student = Student.query.filter_by(reg_number=reg_number).first_or_404()
+        if current_user.role != 'admin':
+            abort(403)
+            
         if request.method == 'POST':
             try:
                 student.name = request.form['name'].strip()
@@ -467,6 +490,5 @@ def create_app():
 if __name__ == '__main__':
     app = create_app()
     with app.app_context():
-        # This will create the database tables if they don't exist
         db.create_all()
     app.run(debug=True)
