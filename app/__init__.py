@@ -3,7 +3,7 @@ from flask import Flask
 from flask_bcrypt import Bcrypt
 from flask_wtf.csrf import CSRFProtect
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager
+from flask_login import LoginManager, current_user
 
 # Initialize extensions outside of the factory function
 db = SQLAlchemy()
@@ -20,12 +20,12 @@ def create_app():
     # Render automatically provides a DATABASE_URL environment variable
     database_url = os.environ.get("DATABASE_URL")
     if database_url:
-        # Use the PostgreSQL database URL from Render
-        app.config['SQLALCHEMY_DATABASE_URI'] = database_url.replace("://", "ql://", 1)
+        # CORRECTED LINE: Replace 'postgresql://' with 'postgresql+psycopg2://'
+        app.config['SQLALCHEMY_DATABASE_URI'] = database_url.replace("postgresql://", "postgresql+psycopg2://", 1)
     else:
         # Fallback to a local SQLite database for local development
         app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
-    
+
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'a-very-hard-to-guess-secret-key')
     
@@ -39,10 +39,12 @@ def create_app():
     # The Flask-Login user loader
     @login_manager.user_loader
     def load_user(user_id):
+        # We import here to avoid a circular dependency
         from .models import User
         return User.query.get(int(user_id))
 
     # Import and register the blueprint for routes
+    # This must be done after the app and extensions are initialized
     from .routes import main_bp
     app.register_blueprint(main_bp)
 
@@ -52,4 +54,3 @@ def create_app():
         db.create_all()
 
     return app
-
