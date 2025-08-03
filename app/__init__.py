@@ -12,7 +12,6 @@ bcrypt = Bcrypt()
 csrf = CSRFProtect()
 login_manager = LoginManager()
 
-# The factory function to create the app
 def create_app():
     # Create the Flask application instance
     app = Flask(__name__, instance_relative_config=True)
@@ -25,6 +24,8 @@ def create_app():
         app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
 
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    
+    # The SECRET_KEY is essential for CSRF protection and session management
     app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'a-very-hard-to-guess-secret-key')
     
     # Initialize extensions with the application
@@ -34,18 +35,15 @@ def create_app():
     login_manager.init_app(app)
     login_manager.login_view = 'main.login'
     
-    # Context processor to make `now` available in all templates
     @app.context_processor
     def inject_now():
         return {'now': datetime.now()}
 
-    # The Flask-Login user loader
     @login_manager.user_loader
     def load_user(user_id):
         from .models import User
         return User.query.get(int(user_id))
 
-    # Import and register the blueprint for routes
     from .routes import main_bp
     app.register_blueprint(main_bp)
 
