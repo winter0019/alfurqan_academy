@@ -1,5 +1,6 @@
 from . import db, bcrypt
 from flask_login import UserMixin
+from sqlalchemy.orm import relationship
 
 # Define the User model for authentication
 class User(db.Model, UserMixin):
@@ -13,13 +14,14 @@ class User(db.Model, UserMixin):
 
     def check_password(self, password):
         return bcrypt.check_password_hash(self.password_hash, password)
-
+    
 # Define the Student model
 class Student(db.Model):
     __tablename__ = 'students'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
-    # Add other student fields as needed
+    # Define a relationship to the Fee model
+    fees = relationship('Fee', backref='student', lazy=True)
 
 # Define the Fees model
 class Fee(db.Model):
@@ -28,4 +30,3 @@ class Fee(db.Model):
     student_id = db.Column(db.Integer, db.ForeignKey('students.id'), nullable=False)
     amount = db.Column(db.Float, nullable=False)
     date = db.Column(db.DateTime, nullable=False)
-    # Add other fee fields as needed
