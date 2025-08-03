@@ -1,52 +1,46 @@
-# app/__init__.py
 import os
-import sqlite3
 from flask import Flask, g
 from flask_bcrypt import Bcrypt
+from flask_wtf.csrf import CSRFProtect
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import sessionmaker
 
-bcrypt = Bcrypt()
+# Import the database URL from Render, if it exists
+database_url = os.environ.get("DATABASE_URL")
 
-# Helper function to get the database connection
-def get_db():
-    db = getattr(g, '_database', None)
-    if db is None:
-        db = g._database = sqlite3.connect(os.path.join('instance', 'database.db'))
-        db.row_factory = sqlite3.Row # Enable dictionary-like row access
-    return db
-
-# Helper function to close the database connection
-def close_connection(exception):
-    db = getattr(g, '_database', None)
-    if db is not None:
-        db.close()
-
+# Set up the Flask application and extensions
 def create_app():
     app = Flask(__name__, instance_relative_config=True)
-    
-    # Configure the app
-    app.config.from_mapping(
-        SECRET_KEY='dev',
-        DATABASE=os.path.join(app.instance_path, 'database.db')
-    )
 
-    # Ensure the instance folder exists
-    try:
-        os.makedirs(app.instance_path)
-    except OSError:
-        pass
+    # Configure the database connection
+    if database_url:
+        # Use the PostgreSQL database URL from Render
+        app.config['SQLALCHEMY_DATABASE_URI'] = database_url.replace("://", "ql://", 1)
+        # SQLAlchemy and psycopg2 are used to connect to PostgreSQL.
+        # This line ensures the app knows which database to connect to.
+        # The replace is a small fix for how psycopg2-binary handles the URL scheme.
+    else:
+        # Fallback to a local SQLite database for local development
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
 
-    # Initialize Bcrypt with the app
+    app.config['SECRET_KEY'] = 'your_very_secret_key_that_you_should_change'
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+    db.init_app(app)
     bcrypt.init_app(app)
+    csrf.init_app(app)
 
-    # Register the database connection teardown function
-    app.teardown_appcontext(close_connection)
-
-    from . import models
     with app.app_context():
-        models.init_db()
+        from . import routes
+        app.register_blueprint(routes.main_bp)
 
-    # Register the blueprint
-    from .routes import main_bp
-    app.register_blueprint(main_bp)
+        # Create database tables if they don't exist
+        db.create_all()
 
     return app
+
+# Initialize extensions outside of the factory function
+db = SQLAlchemy()
+bcrypt = Bcrypt()
+csrf = CSRFProtect()
+
